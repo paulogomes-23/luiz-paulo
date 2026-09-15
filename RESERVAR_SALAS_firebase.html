@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reserva de Salas — Nossa Senhora de Fátima</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16294D;
+    --navy-light:#24406F;
+    --navy-deep:#0E1B34;
+    --gold:#B8912F;
+    --cream:#F6F4EE;
+    --white:#FFFFFF;
+    --sky:#BFE0F5;
+    --sky-strong:#8FC3E8;
+    --red:#B3261E;
+    --green:#3E7A4C;
+    --text:#1E2430;
+    --text-muted:#5B6472;
+    --border:#DDD8CB;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--cream);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{font-family:'Lora',Georgia,serif;}
+  button{font-family:inherit;cursor:pointer;}
+  input,select{font-family:inherit;}
+
+  /* HEADER */
+  header.app-header{
+    background:linear-gradient(160deg,var(--navy) 0%,var(--navy-deep) 100%);
+    color:var(--white);
+    padding:22px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+    border-bottom:3px solid var(--gold);
+  }
+  .header-titles h1{
+    margin:0;
+    font-size:1.6rem;
+    font-weight:700;
+    letter-spacing:0.3px;
+  }
+  .header-titles p{
+    margin:4px 0 0;
+    font-size:0.82rem;
+    color:#C9D4E8;
+    letter-spacing:0.5px;
+  }
+  .header-user{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:0.9rem;
+  }
+  .header-user .pill{
+    background:rgba(255,255,255,0.1);
+    padding:6px 12px;
+    border-radius:20px;
+  }
+  .btn-logout{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.4);
+    color:var(--white);
+    padding:7px 14px;
+    border-radius:8px;
+    font-size:0.85rem;
+    transition:background .15s;
+  }
+  .btn-logout:hover{background:rgba(255,255,255,0.12);}
+
+  /* NAV TABS */
+  nav.tabs{
+    display:flex;
+    gap:4px;
+    background:var(--white);
+    padding:0 20px;
+    border-bottom:1px solid var(--border);
+    overflow-x:auto;
+  }
+  nav.tabs button{
+    background:none;
+    border:none;
+    padding:14px 16px;
+    font-size:0.92rem;
+    font-weight:600;
+    color:var(--text-muted);
+    border-bottom:3px solid transparent;
+    white-space:nowrap;
+  }
+  nav.tabs button.active{
+    color:var(--navy);
+    border-bottom-color:var(--gold);
+  }
+
+  main{max-width:1100px;margin:0 auto;padding:24px 20px 60px;}
+  .card{
+    background:var(--white);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:20px;
+  }
+  .section-title{
+    font-size:1.15rem;
+    margin:0 0 14px;
+    color:var(--navy);
+  }
+
+  /* LOGIN */
+  .login-wrap{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:radial-gradient(circle at top, var(--navy-light), var(--navy-deep) 70%);
+    padding:20px;
+  }
+  .login-card{
+    background:var(--white);
+    border-radius:14px;
+    padding:36px 32px;
+    width:100%;
+    max-width:380px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.35);
+    text-align:center;
+  }
+  .login-card .gold-line{
+    width:46px;height:3px;background:var(--gold);margin:14px auto 20px;
+  }
+  .login-card h1{
+    font-size:1.4rem;color:var(--navy);margin:0;
+  }
+  .login-card .sub{
+    color:var(--text-muted);font-size:0.85rem;margin-top:4px;letter-spacing:0.4px;
+  }
+  .field{text-align:left;margin-bottom:14px;}
+  .field label{
+    display:block;font-size:0.8rem;font-weight:600;color:var(--text-muted);margin-bottom:5px;
+  }
+  .field input,.field select{
+    width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.95rem;
+  }
+  .field input:focus,.field select:focus{outline:2px solid var(--sky-strong);border-color:var(--navy-light);}
+  .btn{
+    display:inline-block;
+    background:var(--navy);
+    color:var(--white);
+    border:none;
+    padding:11px 18px;
+    border-radius:8px;
+    font-weight:600;
+    font-size:0.9rem;
+    transition:background .15s;
+  }
+  .btn:hover{background:var(--navy-light);}
+  .btn-full{width:100%;}
+  .btn-secondary{
+    background:var(--white);color:var(--navy);border:1px solid var(--navy);
+  }
+  .btn-secondary:hover{background:#EEF2F8;}
+  .btn-danger{background:var(--red);}
+  .btn-danger:hover{background:#8f1e18;}
+  .btn-sm{padding:6px 12px;font-size:0.8rem;}
+  .error-msg{color:var(--red);font-size:0.82rem;margin-top:8px;min-height:18px;}
+
+  /* SALAS GRID */
+  .salas-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+    gap:14px;
+  }
+  .sala-box{
+    background:var(--navy);
+    color:var(--white);
+    border:none;
+    border-radius:var(--radius);
+    padding:20px 16px;
+    font-family:'Lora',serif;
+    font-weight:600;
+    font-size:1.02rem;
+    text-align:center;
+    min-height:80px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform .12s, background .15s;
+  }
+  .sala-box:hover{background:var(--navy-light);transform:translateY(-2px);}
+
+  /* CALENDAR */
+  .cal-header{
+    display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
+  }
+  .cal-header .cal-title{font-size:1.05rem;color:var(--navy);font-weight:600;}
+  .cal-nav-btn{
+    background:var(--cream);border:1px solid var(--border);border-radius:6px;
+    width:34px;height:34px;font-size:1rem;color:var(--navy);
+  }
+  .cal-grid{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:6px;
+  }
+  .cal-dow{
+    text-align:center;font-size:0.72rem;font-weight:700;color:var(--text-muted);
+    text-transform:uppercase;letter-spacing:0.4px;padding-bottom:4px;
+  }
+  .cal-day{
+    aspect-ratio:1/1;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--white);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-size:0.85rem;
+    position:relative;
+    min-height:46px;
+  }
+  .cal-day.clickable{cursor:pointer;}
+  .cal-day.clickable:hover{border-color:var(--navy-light);}
+  .cal-day.empty{background:transparent;border:none;}
+  .cal-day.has-res{background:var(--sky);font-weight:700;}
+  .cal-day.has-res:hover{background:var(--sky-strong);}
+  .cal-day.past-with-res .day-num{color:var(--red);}
+  .cal-day.today{box-shadow:inset 0 0 0 2px var(--gold);}
+  .cal-day .dot-count{
+    font-size:0.62rem;color:var(--navy);margin-top:1px;
+  }
+  .cal-legend{
+    display:flex;gap:16px;margin-top:12px;font-size:0.78rem;color:var(--text-muted);flex-wrap:wrap;
+  }
+  .cal-legend span{display:flex;align-items:center;gap:5px;}
+  .swatch{width:12px;height:12px;border-radius:3px;display:inline-block;}
+
+  /* RESERVATION LIST / MODAL */
+  .res-item{
+    border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:10px;
+    display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;
+  }
+  .res-item.past{opacity:0.75;}
+  .res-item .res-info b{color:var(--navy);}
+  .res-item .res-info .meta{font-size:0.78rem;color:var(--text-muted);margin-top:3px;}
+  .res-item.past .res-info .data-line{color:var(--red);font-weight:600;}
+  .res-actions{display:flex;gap:6px;flex-shrink:0;}
+
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(14,27,52,0.55);
+    display:flex;align-items:center;justify-content:center;padding:16px;z-index:50;
+  }
+  .modal{
+    background:var(--white);border-radius:12px;padding:24px;width:100%;max-width:440px;
+    max-height:90vh;overflow-y:auto;
+  }
+  .modal h3{margin-top:0;color:var(--navy);}
+  .modal-close-row{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+
+  /* AVAILABILITY */
+  .avail-table{width:100%;border-collapse:collapse;font-size:0.88rem;}
+  .avail-table th,.avail-table td{
+    text-align:left;padding:10px 8px;border-bottom:1px solid var(--border);
+  }
+  .status-tag{
+    display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.76rem;font-weight:600;
+  }
+  .status-livre{background:#E4F3E7;color:var(--green);}
+  .status-ocupado{background:#FBE7E5;color:var(--red);}
+
+  /* REPORT */
+  .report-filters{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin-bottom:16px;}
+  .report-filters .field{margin-bottom:0;min-width:160px;}
+  table.report-table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+  table.report-table th{
+    background:var(--navy);color:var(--white);text-align:left;padding:9px 8px;font-size:0.75rem;
+    text-transform:uppercase;letter-spacing:0.3px;
+  }
+  table.report-table td{padding:9px 8px;border-bottom:1px solid var(--border);}
+  table.report-table tr.past td.data-cell{color:var(--red);font-weight:600;}
+
+  /* ADMIN */
+  .user-row{
+    display:flex;justify-content:space-between;align-items:center;padding:10px 4px;
+    border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;
+  }
+  .user-row .u-name{font-weight:600;color:var(--navy);}
+  .u-tag{font-size:0.72rem;background:#EEF2F8;color:var(--navy);padding:2px 8px;border-radius:12px;margin-left:8px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;}
+  @media (max-width:520px){.form-grid{grid-template-columns:1fr;}}
+
+  .empty-hint{color:var(--text-muted);font-size:0.88rem;padding:14px 0;text-align:center;}
+  .note-box{
+    background:#F0F4FA;border:1px solid #D6E0EE;border-radius:8px;padding:10px 14px;
+    font-size:0.8rem;color:var(--text-muted);margin-top:6px;
+  }
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--navy-deep);color:var(--white);padding:12px 20px;border-radius:8px;
+    font-size:0.88rem;box-shadow:0 8px 24px rgba(0,0,0,0.3);z-index:100;opacity:0;
+    transition:opacity .25s;pointer-events:none;
+  }
+  .toast.show{opacity:1;}
+  .back-link{background:none;border:none;color:var(--navy);font-weight:600;font-size:0.85rem;margin-bottom:12px;padding:0;}
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+<div id="toast" class="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+/* ============ CONFIGURAÇÃO DO FIREBASE ============ */
+/* Substitua pelos dados do SEU projeto (Firebase Console > Configurações do projeto > Seus apps) */
+const firebaseConfig = {
+  apiKey: "AIzaSyA4RIDzOXNyt-ydlQkNIdRdKAlNfLA57MA",
+  authDomain: "reserva-sala-nsf.firebaseapp.com",
+  projectId: "reserva-sala-nsf",
+  storageBucket: "reserva-sala-nsf.firebasestorage.app",
+  messagingSenderId: "956616774056",
+  appId: "1:956616774056:web:fa4676452f1e9c3e364d9d"
+};
+if(firebaseConfig.apiKey === "SUA_API_KEY_AQUI"){
+  document.getElementById('root').innerHTML =
+    '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font-family:sans-serif;color:#B3261E;">'
+    + '<div><h2>Configuração do Firebase pendente</h2><p>Substitua os valores em <code>firebaseConfig</code> pelos dados do seu projeto Firebase antes de usar o app.</p></div></div>';
+  throw new Error('firebaseConfig não configurado.');
+}
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const usersDocRef = doc(db, "rsvp", "users");
+const reservationsDocRef = doc(db, "rsvp", "reservations");
+
+/* ============ CONFIGURAÇÃO DO APP ============ */
+const SALAS = [
+  "SALA SANTA LÚCIA",
+  "SALA SÃO FRANCISCO",
+  "SALA SANTA JACINTA",
+  "SALA SÃO JOÃO PAULO II",
+  "CAPELA",
+  "COZINHA",
+  "NAVE",
+  "SALÃO"
+];
+const DOW = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+/* ============ ESTADO ============ */
+let state = {
+  users: {},           // { username: {nome, senha, admin:boolean} }
+  reservations: [],     // { id, sala, solicitante, data:'YYYY-MM-DD', inicio:'HH:MM', fim:'HH:MM', usuario, criadoEm }
+  currentUser: null,    // username
+  tab: 'salas',
+  salaAtual: null,
+  calMonth: new Date().getMonth(),
+  calYear: new Date().getFullYear(),
+  loaded: false
+};
+
+const todayStr = () => {
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,'0')+"-"+String(d.getDate()).padStart(2,'0');
+};
+
+/* ============ STORAGE (Firebase Firestore) ============ */
+async function loadData(){
+  try{
+    const snap = await getDoc(usersDocRef);
+    state.users = snap.exists() ? snap.data().value : null;
+  }catch(e){ console.error('Erro ao carregar usuários', e); state.users = null; }
+  if(!state.users){
+    state.users = { admin: { nome:"Administrador", senha:"Adm123", admin:true } };
+    await saveUsers();
+  }
+  try{
+    const snap = await getDoc(reservationsDocRef);
+    state.reservations = snap.exists() ? snap.data().value : [];
+  }catch(e){ console.error('Erro ao carregar reservas', e); state.reservations = []; }
+  state.loaded = true;
+}
+async function saveUsers(){
+  try{ await setDoc(usersDocRef, { value: state.users }); }
+  catch(e){ console.error('Erro ao salvar usuários', e); showToast('Erro ao salvar dados. Tente novamente.'); }
+}
+async function saveReservations(){
+  try{ await setDoc(reservationsDocRef, { value: state.reservations }); }
+  catch(e){ console.error('Erro ao salvar reservas', e); showToast('Erro ao salvar dados. Tente novamente.'); }
+}
+
+/* ============ HELPERS ============ */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function isPastDate(dateStr){ return dateStr < todayStr(); }
+function fmtDateBR(dateStr){
+  const [y,m,d] = dateStr.split('-');
+  return `${d}/${m}/${y}`;
+}
+function timesOverlap(aStart,aEnd,bStart,bEnd){
+  return aStart < bEnd && bStart < aEnd;
+}
+function reservationsForSalaData(sala, data){
+  return state.reservations.filter(r => r.sala===sala && r.data===data);
+}
+function render(){ App(); }
+
+/* ============ .ICS EXPORT ============ */
+function downloadICS(res){
+  const dt = res.data.replace(/-/g,'');
+  const start = dt + 'T' + res.inicio.replace(':','') + '00';
+  const end = dt + 'T' + res.fim.replace(':','') + '00';
+  const ics = [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Comunidade Nossa Senhora de Fatima//Reserva de Salas//PT',
+    'BEGIN:VEVENT',
+    'UID:'+res.id+'@reservasalas',
+    'DTSTART:'+start,
+    'DTEND:'+end,
+    'SUMMARY:Reserva - '+res.sala,
+    'DESCRIPTION:Solicitante: '+res.solicitante+' | Reservado por: '+res.usuario,
+    'LOCATION:'+res.sala,
+    'END:VEVENT','END:VCALENDAR'
+  ].join('\r\n');
+  const blob = new Blob([ics], {type:'text/calendar'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'reserva-'+res.sala.toLowerCase().replace(/\s+/g,'-')+'-'+res.data+'.ics';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function downloadCSV(rows, filename){
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob(["\uFEFF"+csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ============ AUTENTICAÇÃO ============ */
+async function handleLogin(e){
+  e.preventDefault();
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  const u = state.users[user];
+  if(!u || u.senha !== pass){
+    errEl.textContent = 'Usuário ou senha inválidos.';
+    return;
+  }
+  state.currentUser = user;
+  state.tab = 'salas';
+  errEl.textContent = '';
+  render();
+}
+function handleLogout(){
+  state.currentUser = null;
+  render();
+}
+
+/* ============ RESERVAS: MODAL ============ */
+function openReservationModal(sala, dataPreenchida){
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'res-modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal">
+      <h3>Nova reserva — ${esc(sala)}</h3>
+      <form id="res-form">
+        <div class="field">
+          <label>Nome do solicitante</label>
+          <input type="text" id="f-solicitante" required>
+        </div>
+        <div class="field">
+          <label>Data</label>
+          <input type="date" id="f-data" value="${dataPreenchida||''}" min="${todayStr()}" required>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Horário inicial</label>
+            <input type="time" id="f-inicio" required>
+          </div>
+          <div class="field">
+            <label>Horário final</label>
+            <input type="time" id="f-fim" required>
+          </div>
+        </div>
+        <div class="error-msg" id="f-error"></div>
+        <div class="modal-close-row">
+          <button type="button" class="btn btn-secondary" id="f-cancel">Cancelar</button>
+          <button type="submit" class="btn">Salvar reserva</button>
+        </div>
+      </form>
+    </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById('f-cancel').onclick = () => overlay.remove();
+  overlay.onclick = (ev) => { if(ev.target===overlay) overlay.remove(); };
+  document.getElementById('res-form').onsubmit = async (ev) => {
+    ev.preventDefault();
+    const solicitante = document.getElementById('f-solicitante').value.trim();
+    const data = document.getElementById('f-data').value;
+    const inicio = document.getElementById('f-inicio').value;
+    const fim = document.getElementById('f-fim').value;
+    const errEl = document.getElementById('f-error');
+    if(fim <= inicio){ errEl.textContent = 'O horário final deve ser após o horário inicial.'; return; }
+    const conflitos = reservationsForSalaData(sala, data).filter(r => timesOverlap(inicio,fim,r.inicio,r.fim));
+    if(conflitos.length){
+      errEl.textContent = `Conflito: ${sala} já reservada das ${conflitos[0].inicio} às ${conflitos[0].fim} nesta data.`;
+      return;
+    }
+    const novaReserva = {
+      id: 'r'+Date.now()+Math.floor(Math.random()*1000),
+      sala, solicitante, data, inicio, fim,
+      usuario: state.currentUser,
+      criadoEm: new Date().toISOString()
+    };
+    state.reservations.push(novaReserva);
+    await saveReservations();
+    overlay.remove();
+    showToast('Reserva criada com sucesso.');
+    render();
+  };
+}
+async function cancelReservation(id){
+  if(!confirm('Deseja realmente cancelar e excluir esta reserva?')) return;
+  state.reservations = state.reservations.filter(r => r.id !== id);
+  await saveReservations();
+  showToast('Reserva excluída.');
+  render();
+}
+
+/* ============ ADMIN: USUÁRIOS ============ */
+async function handleAddUser(e){
+  e.preventDefault();
+  const username = document.getElementById('nu-user').value.trim();
+  const nome = document.getElementById('nu-nome').value.trim();
+  const senha = document.getElementById('nu-pass').value;
+  const admin = document.getElementById('nu-admin').checked;
+  const errEl = document.getElementById('nu-error');
+  errEl.textContent = '';
+  if(!username || !nome){ errEl.textContent = 'Preencha todos os campos.'; return; }
+  if(senha.length !== 6){ errEl.textContent = 'A senha deve ter exatamente 6 caracteres (maiúsculas e minúsculas diferem).'; return; }
+  if(state.users[username]){ errEl.textContent = 'Já existe um usuário com esse nome de login.'; return; }
+  state.users[username] = { nome, senha, admin };
+  await saveUsers();
+  showToast('Usuário cadastrado.');
+  render();
+}
+async function handleDeleteUser(username){
+  if(username === state.currentUser){ showToast('Você não pode excluir o usuário com o qual está logado.'); return; }
+  if(!confirm(`Excluir o usuário "${username}"?`)) return;
+  delete state.users[username];
+  await saveUsers();
+  showToast('Usuário excluído.');
+  render();
+}
+
+/* ============ RENDER: LOGIN ============ */
+function renderLogin(){
+  const root = document.getElementById('root');
+  root.innerHTML = `
+    <div class="login-wrap">
+      <div class="login-card">
+        <h1 class="serif">RESERVA DE SALAS</h1>
+        <p class="sub">COMUNIDADE NOSSA SENHORA DE FÁTIMA – MEDEIROS</p>
+        <div class="gold-line"></div>
+        <form id="login-form">
+          <div class="field">
+            <label>Usuário</label>
+            <input type="text" id="login-user" autocomplete="username" required>
+          </div>
+          <div class="field">
+            <label>Senha</label>
+            <input type="password" id="login-pass" autocomplete="current-password" required maxlength="6">
+          </div>
+          <div class="error-msg" id="login-error"></div>
+          <button type="submit" class="btn btn-full">Entrar</button>
+        </form>
+      </div>
+    </div>`;
+  document.getElementById('login-form').onsubmit = handleLogin;
+}
+
+/* ============ RENDER: HEADER + TABS ============ */
+function renderShellStart(){
+  const u = state.users[state.currentUser];
+  const isAdmin = u && u.admin;
+  const tabs = [
+    ['salas','SALAS'],
+    ['disponibilidade','DISPONIBILIDADE'],
+    ['relatorios','RELATÓRIOS'],
+  ];
+  if(isAdmin) tabs.push(['admin','ADMIN']);
+  return `
+    <header class="app-header">
+      <div class="header-titles">
+        <h1 class="serif">RESERVA DE SALAS</h1>
+        <p>COMUNIDADE NOSSA SENHORA DE FÁTIMA – MEDEIROS</p>
+      </div>
+      <div class="header-user">
+        <span class="pill">${esc(u ? u.nome : '')} ${isAdmin ? '· Admin' : ''}</span>
+        <button class="btn-logout" id="btn-logout">Sair</button>
+      </div>
+    </header>
+    <nav class="tabs">
+      ${tabs.map(([key,label]) => `<button data-tab="${key}" class="${state.tab===key?'active':''}">${label}</button>`).join('')}
+    </nav>
+    <main id="main-content"></main>
+  `;
+}
+
+/* ============ RENDER: SALAS (menu) ============ */
+function renderSalasMenu(){
+  return `
+    <div class="card">
+      <h2 class="section-title">Selecione uma sala ou espaço</h2>
+      <div class="salas-grid">
+        ${SALAS.map(s => `<button class="sala-box" data-sala="${esc(s)}">${esc(s)}</button>`).join('')}
+      </div>
+    </div>`;
+}
+
+/* ============ RENDER: CALENDÁRIO DE UMA SALA ============ */
+function renderSalaCalendar(sala){
+  const year = state.calYear, month = state.calMonth;
+  const firstDay = new Date(year, month, 1);
+  const startWeekday = firstDay.getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const today = todayStr();
+
+  let cells = '';
+  for(let i=0;i<startWeekday;i++) cells += `<div class="cal-day empty"></div>`;
+  for(let d=1; d<=daysInMonth; d++){
+    const dateStr = year+"-"+String(month+1).padStart(2,'0')+"-"+String(d).padStart(2,'0');
+    const resDia = reservationsForSalaData(sala, dateStr);
+    const hasRes = resDia.length > 0;
+    const past = isPastDate(dateStr);
+    let cls = 'cal-day clickable';
+    if(hasRes) cls += ' has-res';
+    if(hasRes && past) cls += ' past-with-res';
+    if(dateStr === today) cls += ' today';
+    cells += `<div class="${cls}" data-date="${dateStr}">
+        <span class="day-num">${d}</span>
+        ${hasRes ? `<span class="dot-count">${resDia.length} reserva${resDia.length>1?'s':''}</span>` : ''}
+      </div>`;
+  }
+
+  return `
+    <button class="back-link" id="back-to-salas">← Voltar às salas</button>
+    <div class="card">
+      <div class="sala-box" style="margin-bottom:16px;cursor:default;">${esc(sala)}</div>
+      <div class="cal-header">
+        <button class="cal-nav-btn" id="cal-prev">‹</button>
+        <span class="cal-title">${MESES[month]} de ${year}</span>
+        <button class="cal-nav-btn" id="cal-next">›</button>
+      </div>
+      <div class="cal-grid">
+        ${DOW.map(d=>`<div class="cal-dow">${d}</div>`).join('')}
+        ${cells}
+      </div>
+      <div class="cal-legend">
+        <span><span class="swatch" style="background:var(--sky)"></span> Dia com reserva</span>
+        <span><span class="swatch" style="background:var(--white);border:1px solid var(--border)"></span> Dia livre</span>
+        <span><span class="swatch" style="background:var(--gold)"></span> Hoje</span>
+        <span style="color:var(--red)">Texto vermelho = reserva já passada</span>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <h2 class="section-title" style="margin:0;">Reservas de ${esc(sala)}</h2>
+        <button class="btn btn-sm" id="btn-nova-reserva">+ Nova reserva</button>
+      </div>
+      <div id="lista-reservas-sala">${renderReservationsList(sala)}</div>
+    </div>
+  `;
+}
+
+function renderReservationsList(sala, dataFiltro){
+  let lista = state.reservations.filter(r => r.sala === sala);
+  if(dataFiltro) lista = lista.filter(r => r.data === dataFiltro);
+  lista = lista.sort((a,b) => (a.data+a.inicio).localeCompare(b.data+b.inicio));
+  if(!lista.length) return `<div class="empty-hint">Nenhuma reserva encontrada.</div>`;
+  return lista.map(r => {
+    const past = isPastDate(r.data);
+    return `
+    <div class="res-item ${past?'past':''}">
+      <div class="res-info">
+        <b>${esc(r.solicitante)}</b>
+        <div class="meta data-line">${fmtDateBR(r.data)} · ${r.inicio} às ${r.fim}</div>
+        <div class="meta">Reservado por: ${esc(r.usuario)}${past ? ' · concluída' : ''}</div>
+      </div>
+      <div class="res-actions">
+        <button class="btn btn-secondary btn-sm" data-ics="${r.id}">Baixar .ics</button>
+        <button class="btn btn-danger btn-sm" data-del="${r.id}">Excluir</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ============ RENDER: DISPONIBILIDADE ============ */
+function renderDisponibilidade(){
+  const dataEscolhida = state._dispData || todayStr();
+  const rows = SALAS.map(sala => {
+    const ocupacoes = reservationsForSalaData(sala, dataEscolhida).sort((a,b)=>a.inicio.localeCompare(b.inicio));
+    const livre = ocupacoes.length === 0;
+    return `<tr>
+      <td>${esc(sala)}</td>
+      <td><span class="status-tag ${livre?'status-livre':'status-ocupado'}">${livre?'Livre o dia todo':'Ocupada'}</span></td>
+      <td>${ocupacoes.map(o=>`${o.inicio}–${o.fim} (${esc(o.solicitante)})`).join(', ') || '—'}</td>
+    </tr>`;
+  }).join('');
+
+  return `
+    <div class="card">
+      <h2 class="section-title">Consultar disponibilidade por data</h2>
+      <div class="field" style="max-width:220px;">
+        <label>Data</label>
+        <input type="date" id="disp-data" value="${dataEscolhida}">
+      </div>
+      <table class="avail-table">
+        <thead><tr><th>Sala / Espaço</th><th>Status</th><th>Horários ocupados</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+/* ============ RENDER: RELATÓRIOS ============ */
+function renderRelatorios(){
+  const de = state._relDe || todayStr();
+  const ate = state._relAte || todayStr();
+  const salaFiltro = state._relSala || '';
+
+  let lista = state.reservations.filter(r => r.data >= de && r.data <= ate);
+  if(salaFiltro) lista = lista.filter(r => r.sala === salaFiltro);
+  lista = lista.sort((a,b) => (a.data+a.inicio).localeCompare(b.data+b.inicio));
+
+  const rows = lista.map(r => {
+    const past = isPastDate(r.data);
+    return `<tr class="${past?'past':''}">
+      <td class="data-cell">${fmtDateBR(r.data)}</td>
+      <td>${esc(r.sala)}</td>
+      <td>${esc(r.solicitante)}</td>
+      <td>${r.inicio}–${r.fim}</td>
+      <td>${esc(r.usuario)}</td>
+      <td>${past ? 'Concluída' : 'Agendada'}</td>
+    </tr>`;
+  }).join('');
+
+  return `
+    <div class="card">
+      <h2 class="section-title">Relatório por período</h2>
+      <div class="report-filters">
+        <div class="field">
+          <label>De</label>
+          <input type="date" id="rel-de" value="${de}">
+        </div>
+        <div class="field">
+          <label>Até</label>
+          <input type="date" id="rel-ate" value="${ate}">
+        </div>
+        <div class="field">
+          <label>Sala (opcional)</label>
+          <select id="rel-sala">
+            <option value="">Todas as salas</option>
+            ${SALAS.map(s=>`<option value="${esc(s)}" ${s===salaFiltro?'selected':''}>${esc(s)}</option>`).join('')}
+          </select>
+        </div>
+        <button class="btn" id="rel-filtrar">Filtrar</button>
+        <button class="btn btn-secondary" id="rel-exportar">Exportar CSV</button>
+      </div>
+      ${lista.length ? `
+      <table class="report-table">
+        <thead><tr><th>Data</th><th>Sala</th><th>Solicitante</th><th>Horário</th><th>Usuário</th><th>Situação</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>` : `<div class="empty-hint">Nenhuma reserva no período selecionado.</div>`}
+    </div>`;
+}
+
+/* ============ RENDER: ADMIN ============ */
+function renderAdmin(){
+  const rows = Object.entries(state.users).map(([username, u]) => `
+    <div class="user-row">
+      <div><span class="u-name">${esc(u.nome)}</span> <span style="color:var(--text-muted);font-size:0.82rem;">(${esc(username)})</span>${u.admin?'<span class="u-tag">Admin</span>':''}</div>
+      <button class="btn btn-danger btn-sm" data-deluser="${esc(username)}">Excluir</button>
+    </div>`).join('');
+
+  return `
+    <div class="card">
+      <h2 class="section-title">Usuários cadastrados</h2>
+      ${rows || '<div class="empty-hint">Nenhum usuário.</div>'}
+    </div>
+    <div class="card">
+      <h2 class="section-title">Cadastrar novo usuário</h2>
+      <form id="new-user-form">
+        <div class="form-grid">
+          <div class="field">
+            <label>Nome de login</label>
+            <input type="text" id="nu-user" required>
+          </div>
+          <div class="field">
+            <label>Nome completo</label>
+            <input type="text" id="nu-nome" required>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Senha (exatamente 6 caracteres, maiúsc./minúsc. diferem)</label>
+            <input type="text" id="nu-pass" maxlength="6" required>
+          </div>
+          <div class="field" style="display:flex;align-items:center;gap:8px;padding-top:22px;">
+            <input type="checkbox" id="nu-admin" style="width:auto;">
+            <label style="margin:0;">Este usuário é Administrador</label>
+          </div>
+        </div>
+        <div class="error-msg" id="nu-error"></div>
+        <button type="submit" class="btn">Cadastrar usuário</button>
+      </form>
+    </div>`;
+}
+
+/* ============ APP PRINCIPAL ============ */
+function App(){
+  const root = document.getElementById('root');
+  if(!state.loaded){
+    root.innerHTML = `<div class="login-wrap"><span style="color:#fff;">Carregando…</span></div>`;
+    return;
+  }
+  if(!state.currentUser){
+    renderLogin();
+    return;
+  }
+  root.innerHTML = renderShellStart();
+  const main = document.getElementById('main-content');
+
+  if(state.tab === 'salas'){
+    main.innerHTML = state.salaAtual ? renderSalaCalendar(state.salaAtual) : renderSalasMenu();
+  } else if(state.tab === 'disponibilidade'){
+    main.innerHTML = renderDisponibilidade();
+  } else if(state.tab === 'relatorios'){
+    main.innerHTML = renderRelatorios();
+  } else if(state.tab === 'admin'){
+    main.innerHTML = renderAdmin();
+  }
+
+  attachEvents();
+}
+
+/* ============ EVENTOS ============ */
+function attachEvents(){
+  const logout = document.getElementById('btn-logout');
+  if(logout) logout.onclick = handleLogout;
+
+  document.querySelectorAll('nav.tabs button').forEach(b => {
+    b.onclick = () => { state.tab = b.dataset.tab; state.salaAtual = null; render(); };
+  });
+
+  // SALAS menu
+  document.querySelectorAll('.sala-box[data-sala]').forEach(b => {
+    b.onclick = () => {
+      state.salaAtual = b.dataset.sala;
+      const now = new Date();
+      state.calMonth = now.getMonth();
+      state.calYear = now.getFullYear();
+      render();
+    };
+  });
+  const backBtn = document.getElementById('back-to-salas');
+  if(backBtn) backBtn.onclick = () => { state.salaAtual = null; render(); };
+
+  // Calendário navegação
+  const prev = document.getElementById('cal-prev');
+  const next = document.getElementById('cal-next');
+  if(prev) prev.onclick = () => {
+    state.calMonth--; if(state.calMonth<0){state.calMonth=11;state.calYear--;}
+    render();
+  };
+  if(next) next.onclick = () => {
+    state.calMonth++; if(state.calMonth>11){state.calMonth=0;state.calYear++;}
+    render();
+  };
+
+  // Clique em dia do calendário
+  document.querySelectorAll('.cal-day.clickable').forEach(cell => {
+    cell.onclick = () => {
+      const date = cell.dataset.date;
+      const listaDiv = document.getElementById('lista-reservas-sala');
+      if(listaDiv){
+        listaDiv.innerHTML = renderReservationsList(state.salaAtual, date);
+        attachListEvents();
+        listaDiv.scrollIntoView({behavior:'smooth', block:'nearest'});
+      }
+    };
+  });
+
+  const novaReservaBtn = document.getElementById('btn-nova-reserva');
+  if(novaReservaBtn) novaReservaBtn.onclick = () => openReservationModal(state.salaAtual);
+
+  attachListEvents();
+
+  // Disponibilidade
+  const dispData = document.getElementById('disp-data');
+  if(dispData) dispData.onchange = () => { state._dispData = dispData.value; render(); };
+
+  // Relatórios
+  const relFiltrar = document.getElementById('rel-filtrar');
+  if(relFiltrar) relFiltrar.onclick = () => {
+    state._relDe = document.getElementById('rel-de').value;
+    state._relAte = document.getElementById('rel-ate').value;
+    state._relSala = document.getElementById('rel-sala').value;
+    render();
+  };
+  const relExportar = document.getElementById('rel-exportar');
+  if(relExportar) relExportar.onclick = () => {
+    const de = document.getElementById('rel-de').value;
+    const ate = document.getElementById('rel-ate').value;
+    const salaFiltro = document.getElementById('rel-sala').value;
+    let lista = state.reservations.filter(r => r.data >= de && r.data <= ate);
+    if(salaFiltro) lista = lista.filter(r => r.sala === salaFiltro);
+    lista = lista.sort((a,b) => (a.data+a.inicio).localeCompare(b.data+b.inicio));
+    const rows = [['Data','Sala','Solicitante','Início','Fim','Usuário','Situação']];
+    lista.forEach(r => rows.push([fmtDateBR(r.data), r.sala, r.solicitante, r.inicio, r.fim, r.usuario, isPastDate(r.data)?'Concluída':'Agendada']));
+    downloadCSV(rows, `relatorio-reservas-${de}-a-${ate}.csv`);
+  };
+
+  // Admin
+  const newUserForm = document.getElementById('new-user-form');
+  if(newUserForm) newUserForm.onsubmit = handleAddUser;
+  document.querySelectorAll('[data-deluser]').forEach(b => {
+    b.onclick = () => handleDeleteUser(b.dataset.deluser);
+  });
+}
+
+function attachListEvents(){
+  document.querySelectorAll('[data-ics]').forEach(b => {
+    b.onclick = () => {
+      const r = state.reservations.find(x => x.id === b.dataset.ics);
+      if(r) downloadICS(r);
+    };
+  });
+  document.querySelectorAll('[data-del]').forEach(b => {
+    b.onclick = () => cancelReservation(b.dataset.del);
+  });
+}
+
+/* ============ INIT ============ */
+(async function init(){
+  render();
+  await loadData();
+  render();
+
+  /* Sincronização em tempo real entre dispositivos */
+  onSnapshot(usersDocRef, (snap) => {
+    if(snap.exists()){ state.users = snap.data().value; render(); }
+  }, (e) => console.error('Erro na sincronização de usuários', e));
+
+  onSnapshot(reservationsDocRef, (snap) => {
+    if(snap.exists()){ state.reservations = snap.data().value; render(); }
+  }, (e) => console.error('Erro na sincronização de reservas', e));
+})();
+</script>
+</body>
+</html>
