@@ -962,61 +962,6 @@ function attachListEvents(){
   });
 }
 
-/* ============ FUNÇÕES DE SALVAMENTO CORRIGIDAS ============ */
-async function saveUsers(){
-  try{
-    // Força o Firebase a mesclar os dados criando o documento se ele não existir
-    await setDoc(usersDocRef, { value: state.users }, { merge: true });
-  } catch(e){
-    console.error('Erro ao salvar usuários', e);
-    showToast('Erro ao salvar dados. Tente novamente.');
-  }
-}
-
-async function saveReservations(){
-  try{
-    // Força o Firebase a criar o documento e gravar o array de reservas com segurança
-    await setDoc(reservationsDocRef, { value: state.reservations }, { merge: true });
-  } catch(e){
-    console.error('Erro ao salvar reservas', e);
-    showToast('Erro ao salvar dados. Tente novamente.');
-  }
-}
-
-/* ============ HELPERS ============ */
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
-}
-
-function esc(s){ 
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); 
-}
-
-function isPastDate(dateStr){ 
-  return dateStr < todayStr(); 
-}
-
-function fmtDateBR(dateStr){ 
-  const [y,m,d] = dateStr.split('-'); 
-  return `${d}/${m}/${y}`; 
-}
-
-function timesOverlap(aStart,aEnd,bStart,bEnd){ 
-  return aStart < bEnd && bStart < aEnd; 
-}
-
-function reservationsForSalaData(sala, data){ 
-  return state.reservations.filter(r => r.sala===sala && r.data===data); 
-}
-
-function render(){ 
-  App(); 
-}
-
 /* ============ INIT CORRIGIDO E DEFINITIVO ============ */
 (async function init(){
   render(); 
@@ -1025,23 +970,22 @@ function render(){
   onSnapshot(usersDocRef, async (snap) => {
     if(snap.exists() && snap.data() && snap.data().value){
       state.users = snap.data().value;
+      verificarCargaCompleta();
     } else {
       state.users = { 
         admin: { nome:"Administrador", senha:"Adm123", admin:true } 
       };
       await saveUsers();
     }
-    verificarCargaCompleta();
   }, (e) => console.error('Erro na sincronização de usuários', e));
 
-  // 2. Monitora as Reservas no Firebase
+  // 2. Monitora as Reservas no Firebase (CORRIGIDO para não apagar o banco)
   onSnapshot(reservationsDocRef, async (snap) => {
     if(snap.exists() && snap.data() && snap.data().value){
       state.reservations = snap.data().value;
     } else {
-      // Se não existir o documento remoto, mantém o local vazio e cria no banco
+      // Se o banco estiver vazio no servidor pela primeira vez, mantém o local vazio
       state.reservations = [];
-      await saveReservations();
     }
     verificarCargaCompleta();
   }, (e) => console.error('Erro na sincronização de reservas', e));
