@@ -964,19 +964,43 @@ function attachListEvents(){
 
 /* ============ INIT ============ */
 (async function init(){
-  render();
-  await loadData();
-  render();
+  // Mostra a tela de "Carregando..." na abertura
+  render(); 
 
-  /* Sincronização em tempo real entre dispositivos */
-  onSnapshot(usersDocRef, (snap) => {
-    if(snap.exists()){ state.users = snap.data().value; render(); }
+  // 1. Busca e monitora os Usuários no Firebase
+  onSnapshot(usersDocRef, async (snap) => {
+    if(snap.exists()){
+      state.users = snap.data().value;
+    } else {
+      // Se for a primeira vez rodando, cria o admin padrão
+      state.users = { 
+        admin: { nome:"Administrador", senha:"Adm123", admin:true } 
+      };
+      await saveUsers();
+    }
+    verificarCargaCompleta();
   }, (e) => console.error('Erro na sincronização de usuários', e));
 
-  onSnapshot(reservationsDocRef, (snap) => {
-    if(snap.exists()){ state.reservations = snap.data().value; render(); }
+  // 2. Busca e monitora as Reservas no Firebase
+  onSnapshot(reservationsDocRef, async (snap) => {
+    if(snap.exists()){
+      state.reservations = snap.data().value || [];
+    } else {
+      // Se não houver reservas no banco, inicia um histórico vazio
+      state.reservations = [];
+      await saveReservations();
+    }
+    verificarCargaCompleta();
   }, (e) => console.error('Erro na sincronização de reservas', e));
 })();
-</script>
-</body>
+
+// Função que avisa o sistema que os dados chegaram do banco de dados
+function verificarCargaCompleta() {
+  if (state.users && Array.isArray(state.reservations)) {
+    state.loaded = true;
+    render();
+  }
+}
+</script> 
+</body> 
 </html>
